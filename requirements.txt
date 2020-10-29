@@ -4,4 +4,4 @@ sklearn
 nltk
 jupyterlab
 sqlalchemy
-
+pickle
