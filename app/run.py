@@ -41,13 +41,36 @@ model = joblib.load("models/classifier.pkl")
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
-    
+
+    # extract the sum of how often each category is represented
+    categories = df.columns[4:]
+    category_counts = []
+    for idx, name in enumerate(df.columns[4:]):
+        category_counts.append(df[name].sum())
+
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [
+        {
+            'data': [
+                Bar(
+                    x=categories,
+                    y=category_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of categories in trainingset',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Category"
+                }
+            }
+        }
+        ,
         {
             'data': [
                 Bar(

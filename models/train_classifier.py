@@ -57,10 +57,18 @@ def build_model():
     """
     pipeline = Pipeline([
         ("vect", CountVectorizer(tokenizer=tokenize)),
-        ("tfidf", TfidfTransformer(use_idf=True)),
-        ("moclf", MultiOutputClassifier(RandomForestClassifier(n_estimators=100)))
+        ("tfidf", TfidfTransformer()),
+        ("moclf", MultiOutputClassifier(RandomForestClassifier()))
     ])
-    return pipeline
+    # parameters for gridsearch
+    parameters = {
+        'moclf__estimator__n_estimators': [50, 100],
+        'vect__max_df': [0.5, 1.0],
+    }
+
+    grid = GridSearchCV(pipeline, param_grid=parameters)
+
+    return grid
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
