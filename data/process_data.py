@@ -38,7 +38,9 @@ def clean_data(df):
     for column in categories:
         # sets each value to be the last character of the string
         categories[column] = categories[column].astype(str).str[-1:]
-
+        # sets value of "2" to the mode
+        column_mode = categories[column].mode()[0]
+        categories[column] = categories[column].apply(lambda x: x.replace("2", column_mode))
         # converts column from string to numeric
         categories[column] = categories[column].astype(int)
 
@@ -54,7 +56,7 @@ def clean_data(df):
 
 def save_data(df, database_filename):
     engine = create_engine('sqlite:///'+database_filename)
-    df.to_sql('messages', engine, index=False)
+    df.to_sql('messages', engine, if_exists='replace', index=False)
 
 
 def main():

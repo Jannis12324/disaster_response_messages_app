@@ -58,9 +58,9 @@ def build_model():
     pipeline = Pipeline([
         ("vect", CountVectorizer(tokenizer=tokenize)),
         ("tfidf", TfidfTransformer(use_idf=True)),
-        ("moclf", MultiOutputClassifier(RandomForestClassifier(n_estimators=50, max_depth=10)))
+        ("moclf", MultiOutputClassifier(RandomForestClassifier(n_estimators=100)))
     ])
-    return model
+    return pipeline
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
@@ -73,9 +73,10 @@ def evaluate_model(model, X_test, Y_test, category_names):
     :return: prints the classification report
     """
     y_pred = model.predict(X_test)
-    for idx, _ in enumerate(y_pred):
-        print("Score for {}:".format(category_names[idx]))
-        print(classification_report(Y_test.iloc[:, idx], y_pred.iloc[:, idx]))
+
+    for idx, name in enumerate(category_names):
+        print("Score for {}:".format(name))
+        print(classification_report(Y_test.iloc[:, idx], y_pred[:, idx]))
 
 
 def save_model(model, model_filepath):

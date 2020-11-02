@@ -5,3 +5,5 @@ nltk
 jupyterlab
 sqlalchemy
 pickle
+plotly
+flask
