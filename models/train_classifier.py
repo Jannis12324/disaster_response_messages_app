@@ -16,8 +16,6 @@ from sklearn.model_selection import GridSearchCV
 import pickle
 nltk.download(['punkt', 'wordnet'])
 
-# TODO: funktionsbeschreibungen ergänzen
-
 
 def load_data(database_filepath):
     """
@@ -53,37 +51,39 @@ def tokenize(text):
 
 def build_model():
     """
-
-    :return:
+    Builds a pipeline with the three components Countvectorizer, Tfidf transformer and a
+    Random Forest as multi output classifier
+    :return: the pipeline object
     """
-    # TODO: parameter für das modell einfügen
     pipeline = Pipeline([
         ("vect", CountVectorizer(tokenizer=tokenize)),
-        ("tfidf", TfidfTransformer()),
-        ("moclf", MultiOutputClassifier(RandomForestClassifier()))
+        ("tfidf", TfidfTransformer(use_idf=True)),
+        ("moclf", MultiOutputClassifier(RandomForestClassifier(n_estimators=50, max_depth=10)))
     ])
     return model
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
     """
-
-    :param model:
-    :param X_test:
-    :param Y_test:
-    :param category_names:
-    :return:
+    Predicts the Y values from X_test and prints a classification report for each category.
+    :param model: (pipeline object) classification pipeline model
+    :param X_test: (vector shaped (n,)) X_test values the model hasn't seen yet
+    :param Y_test: (matrix shaped(n,36)) The actual outcomes for the X_test values
+    :param category_names: (list of strings) The category names of the Y values
+    :return: prints the classification report
     """
     y_pred = model.predict(X_test)
-    print(classification_report(Y_test, y_pred, target_names=category_names))
+    for idx, _ in enumerate(y_pred):
+        print("Score for {}:".format(category_names[idx]))
+        print(classification_report(Y_test.iloc[:, idx], y_pred.iloc[:, idx]))
 
 
 def save_model(model, model_filepath):
     """
-
-    :param model:
-    :param model_filepath:
-    :return:
+    Saves the classification model at the given filepath
+    :param model: (pipeline object) The classification model
+    :param model_filepath: (string) filepath
+    :return: None
     """
     # Dump the trained decision tree classifier with Pickle
     model_filename = model_filepath
